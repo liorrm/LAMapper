@@ -8,16 +8,25 @@ client.connect();
 
 var createNeighborhoodQuery = 'CREATE TABLE neighborhood'
 + '('
-+ 'id user_id uuid DEFAULT uuid_generate_v4(),'
-+ 'name varchar(255),'
-+ 'population INTEGER(10),'
-+ 'type varchar(255),'
-+ 'area FLOAT,'
-+ 'demographics json,'
-+ ')'
++ 'id SERIAL PRIMARY KEY, '
++ 'name VARCHAR(255), '
++ 'geom GEOMETRY(POLYGON), '
++ 'population INTEGER, '
++ 'type VARCHAR(255), '
++ 'area FLOAT, '
++ 'demographics JSON'
++ ');'
 
-var query = client.query('CREATE TABLE items(id SERIAL PRIMARY KEY, text VARCHAR(40) not null, complete BOOLEAN)');
+console.log(createNeighborhoodQuery)
+
+var query = client.query(createNeighborhoodQuery);
 
 query.on('end', function() {
-  client.end();
+    console.log('created')
+    client.end();
+});
+
+query.on('error', function(err) {
+    console.log('error', err)
+    client.end();
 });
