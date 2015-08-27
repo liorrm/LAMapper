@@ -9,8 +9,8 @@ var query = client.query('CREATE EXTENSION postgis;');
 console.log(query)
 
 query.on('end', function() {
-  console.log('success')
-  client.end();
+    console.log('success')
+    client.end();
 });
 
 query.on('error', function(err) {

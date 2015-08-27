@@ -22,11 +22,11 @@ console.log(createNeighborhoodQuery)
 var query = client.query(createNeighborhoodQuery);
 
 query.on('end', function() {
-  console.log('created')
-  client.end();
+    console.log('created')
+    client.end();
 });
 
 query.on('error', function(err) {
-  console.log('error', err)
-  client.end();
+    console.log('error', err)
+    client.end();
 });
