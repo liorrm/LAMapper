@@ -21,12 +21,12 @@ console.log(createNeighborhoodQuery)
 
 var query = client.query(createNeighborhoodQuery);
 
-query.on('end', function() {
-    console.log('created')
+query.on('end', function(feedback) {
+    console.log('Table created successfully: ', feedback)
     client.end();
 });
 
 query.on('error', function(err) {
-    console.log('error', err)
+    console.log('An error occurred: ', err)
     client.end();
 });
