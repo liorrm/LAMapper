@@ -1,9 +1,9 @@
 // la_mapper database created in psql console
 var pg = require('pg');
-var dbUrl = process.env.DATABASE_URL || 'postgres://localhost:5432/la_mapper';
+var config = require('../config');
 
 // establish db connection
-var client = new pg.Client(dbUrl);
+var client = new pg.Client(config.dbUrl);
 client.connect();
 
 var createNeighborhoodQuery = 'CREATE TABLE neighborhood'
