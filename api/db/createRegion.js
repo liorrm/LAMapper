@@ -12,6 +12,7 @@ var createNeighborhoodQuery = 'CREATE TABLE region'
 + 'name VARCHAR(255), '
 + 'description TEXT, '
 + 'geom GEOMETRY(POLYGON), '
++ 'alt_geom GEOMETRY(MULTIPOLYGON), ' // if neighborhood is a multipolyon, it needs a different field;
 + 'population INTEGER, '
 + 'area FLOAT, '
 + 'demographics JSON'

@@ -13,6 +13,7 @@ var createNeighborhoodQuery = 'CREATE TABLE neighborhood'
 + 'name VARCHAR(255), '
 + 'description TEXT, '
 + 'geom GEOMETRY(POLYGON), '
++ 'alt_geom GEOMETRY(MULTIPOLYGON), ' // if neighborhood is a multipolyon, it needs a different field;
 + 'population INTEGER, '
 + 'type VARCHAR(255), '
 + 'area FLOAT, '
