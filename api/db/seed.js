@@ -4,7 +4,7 @@ var pg = require('pg');
 var config = require('../config');
 var async = require('async');
 var regionUrl = 'https://s3-us-west-2.amazonaws.com/mappingla.com/downloads/regions/la_county.json';
-var neighborhoodUrl = 'http://s3-us-west-2.amazonaws.com/mappingla.com/downloads/neighborhoods/la_county_simplified.json';
+var neighborhoodUrl = 'https://s3-us-west-2.amazonaws.com/mappingla.com/downloads/neighborhoods/la_city.json';
 
 // first store the regions, because the neighborhood table has a constraint on the region table
 function saveRegion(region, client, cb) { // client should be connected here
