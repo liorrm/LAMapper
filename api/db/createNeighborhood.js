@@ -10,7 +10,7 @@ var createNeighborhoodQuery = 'CREATE TABLE neighborhood'
 + '('
 + 'id SERIAL PRIMARY KEY, '
 + 'region_id INTEGER, '
-+ 'name VARCHAR(255), '
++ 'name VARCHAR(255) NOT NULL UNIQUE, '
 + 'description TEXT, '
 + 'geom GEOMETRY(POLYGON), '
 + 'alt_geom GEOMETRY(MULTIPOLYGON), ' // if neighborhood is a multipolyon, it needs a different field;
