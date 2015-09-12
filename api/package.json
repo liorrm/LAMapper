@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "pg": "*"
+    "pg": "*",
+    "async": "1.4.2"
   }
 }
