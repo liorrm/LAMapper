@@ -10,9 +10,7 @@ var neighborhoodUrl = 'https://s3-us-west-2.amazonaws.com/mappingla.com/download
 function saveRegion(region, client, cb) { // client should be connected here
     // don't close the connection after each INSERT. Close it after all are done;
 
-   var geomField = region.geometry.type === 'polygon' ? 'geom' : 'alt_geom';
-
-   var sql = 'INSERT INTO region (name, ' + geomField + ') VALUES ($1, ST_GeomFromGeoJSON($2))'
+   var sql = 'INSERT INTO region (name, geom) VALUES ($1, ST_GeomFromGeoJSON($2))'
 
    var query = client.query(sql, [region.properties.Name, region.geometry]);
 
@@ -28,12 +26,8 @@ function saveRegion(region, client, cb) { // client should be connected here
 
 function saveNeighborhood(neighborhood, client, cb) {
 
-    var geomField = neighborhood.geometry.type === 'polygon' ? 'geom' : 'alt_geom';
-
-    console.log('this should be name', neighborhood.properties.name )
-
     // use ST_WITHIN to find the region the neighborhood belongs to
-    var sql = 'INSERT INTO neighborhood (name, ' + geomField + ', region_id) VALUES ($1, ST_GeomFromGeoJSON($2), (SELECT id FROM region WHERE ST_Intersects( (CASE WHEN geom IS NULL THEN alt_geom ELSE geom END),ST_GeomFromGeoJSON($2) ) LIMIT 1 ))'
+    var sql = 'INSERT INTO neighborhood (name, geom, region_id) VALUES ($1, ST_GeomFromGeoJSON($2), (SELECT id FROM region WHERE ST_Intersects(geom,ST_GeomFromGeoJSON($2) ) LIMIT 1 ))'
 
     var query = client.query(sql, [neighborhood.properties.name, neighborhood.geometry]);
 
