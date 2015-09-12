@@ -6,18 +6,15 @@ var config = require('../config');
 var client = new pg.Client(config.dbUrl);
 client.connect();
 
-var createNeighborhoodQuery = 'CREATE TABLE neighborhood'
+var createNeighborhoodQuery = 'CREATE TABLE region'
 + '('
 + 'id SERIAL PRIMARY KEY, '
-+ 'region_id INTEGER, '
 + 'name VARCHAR(255) NOT NULL UNIQUE, '
 + 'description TEXT, '
 + 'geom GEOMETRY(MULTIPOLYGON), '
 + 'population INTEGER, '
-+ 'type VARCHAR(255), '
 + 'area FLOAT, '
-+ 'demographics JSON, '
-+ 'FOREIGN KEY (region_id) REFERENCES region(id)'
++ 'demographics JSON'
 + ');'
 
 console.log(createNeighborhoodQuery)

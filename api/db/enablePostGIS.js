@@ -1,7 +1,6 @@
 var pg = require('pg');
-var dbUrl = process.env.DATABASE_URL || 'postgres://localhost:5432/la_mapper';
-
-var client = new pg.Client(dbUrl);
+var config = require('../config')
+var client = new pg.Client(config.dbUrl);
 client.connect();
 
 var query = client.query('CREATE EXTENSION postgis;');
