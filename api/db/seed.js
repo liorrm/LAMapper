@@ -44,7 +44,7 @@ function saveNeighborhood(neighborhood, client, cb) {
 +                '( '
 +                    'SELECT id '
 +                    'FROM region '
-+                    'WHERE ST_Contains(geom,ST_GeomFromGeoJSON($2) ) '
++                    'WHERE ST_Contains(geom,ST_Centroid(ST_GeomFromGeoJSON($2)) ) '
 +                ') '
 +        ')'
 
@@ -54,7 +54,7 @@ console.log(sql)
 
     query.on('error', function(err){
         console.log('there was an error WITH THIS neighborhood: ', neighborhood.properties.name, err);
-        // cb(err);
+        cb();
     });
 
     query.on('end', function(){
@@ -79,7 +79,7 @@ function seedTable(polygonUrl, saveFunction, callback) {
                 saveFunction(polygon, client, cb)
             },
             function(err) {
-                if (err) {console.log(err)}
+                if (err) {console.log(err); client.end();}
                 client.end();
                 callback();
             }
