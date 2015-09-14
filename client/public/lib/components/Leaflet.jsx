@@ -3,7 +3,6 @@ var Leaflet = React.createClass({
         return {};
     },
     componentDidMount: function() {
-        console.log('mounted')
 
         var CDBTileUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 
@@ -23,13 +22,38 @@ var Leaflet = React.createClass({
         );
 
         // instantiate base layer
-        var baseLayer = new L.tileLayer(CDBTileUrl, {
+       this.baseLayer = new L.tileLayer(CDBTileUrl, {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 
         });
+       this.regionLayer = new L.FeatureGroup();
 
         // add baselayer to map
-        this.map.addLayer(baseLayer);
+        this.map.addLayer(this.baseLayer);
+        this.map.addLayer(this.regionLayer);
+    },
+    componentWillReceiveProps: function(nextProps) {
+        console.log('props received')
+        if (nextProps.regions) {
+            for (var i = nextProps.regions.length - 1; i >= 0; i--) {
+                console.log('iterating', JSON.parse(nextProps.regions[i].geojson))
+                var polygon = L.geoJson(JSON.parse(nextProps.regions[i].geojson), {
+                    style: function (feature) {
+                        return {
+                            stroke: true,
+                            weight: 1,
+                            opacity: 1,
+                            color: '#119b49',
+                            fill: false,
+                            fillOpacity: 5
+                        };
+                    }
+                });
+
+                this.regionLayer.addLayer(polygon);
+            }
+        }
+        // console.log('this is next props', nextProps);
     },
     componentWillUnmount: function() {
         this.map.remove();

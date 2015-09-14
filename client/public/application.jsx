@@ -3,7 +3,7 @@
 
 // console.log(React, React.render)
 React.render(
-    <Leaflet />, document.getElementById('app')
+    <Application />, document.getElementById('app')
 );
 
 // console.log('hey')
