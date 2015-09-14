@@ -10,7 +10,7 @@ var Leaflet = React.createClass({
         // instantiate Leaflet map
         this.map = new L.Map('map', {
                 layers: [],
-                // center: new L.LatLng(37.6543, -121.8552),
+                center: new L.LatLng(34.0500, -118.2500),
                 zoom: 9,
                 minZoom: 4,
                 maxBounds:[[-85,-180.0],[85,180.0]],
