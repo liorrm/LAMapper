@@ -21,20 +21,19 @@ var Leaflet = React.createClass({
                 attributionControl: false
             }
         );
+
         // instantiate base layer
-        var baseLayer = L.tileLayer(CDBTileUrl, {
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+        var baseLayer = new L.tileLayer(CDBTileUrl, {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+
         });
 
         // add baselayer to map
         this.map.addLayer(baseLayer);
-
-        console.log(baseLayer)
-        console.log(this.map)
     },
-    // componentWillUnmount: function() {
-    //     this.map.remove();
-    // },
+    componentWillUnmount: function() {
+        this.map.remove();
+    },
     render: function() {
 
         var mapStyle = {
