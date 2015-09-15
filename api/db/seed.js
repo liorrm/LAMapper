@@ -37,14 +37,17 @@ function saveNeighborhood(neighborhood, client, cb) {
 +    'VALUES '
 +    '( '
 +            '$1, ( '
-+                'CASE ST_IsValid(ST_GeomFromGeoJSON($2)) '
++                'CASE ST_IsValid(ST_GeomFromGeoJSON($2)) ' // check for validity
 +                    'WHEN TRUE THEN ST_GeomFromGeoJSON($2) '
 +                    'ELSE ST_CollectionExtract(ST_GeomFromGeoJSON($2), 3) '
+                      // if not valid, extract valid collection
 +                'END), '
 +                '( '
 +                    'SELECT id '
 +                    'FROM region '
-+                    'WHERE ST_Contains(geom,ST_Centroid(ST_GeomFromGeoJSON($2)) ) '
++                    'WHERE ST_Contains(geom, ST_Centroid(ST_GeomFromGeoJSON($2)) ) '
+                      // find the region that contains the neighborhood's centroid
+                      // and assign that region id as the neighborhood's region id
 +                ') '
 +        ')'
 
