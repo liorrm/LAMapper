@@ -3,15 +3,20 @@ var Application = React.createClass({
         return {};
     },
     componentDidMount: function() {
-        console.log('hello?')
-        this.loadPolygonData('/api/regions');
+        this.loadRegions();
+        this.loadNeigborhoods();
     },
-    loadPolygonData: function(url) {
-        console.log(url, 'erwer LOD loadPolygonData')
-        $.getJSON(url, function(data) {
-            console.log(data.rows)
+    loadRegions: function() {
+        $.getJSON('/api/regions', function(data) {
             this.setState({
                 regions: data.rows
+            });
+        }.bind(this));
+    },
+    loadNeigborhoods: function() {
+        $.getJSON('api/neighborhoods', function(data) {
+            this.setState({
+                neighborhoods: data.rows
             });
         }.bind(this));
     },

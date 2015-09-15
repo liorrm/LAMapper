@@ -22,38 +22,58 @@ var Leaflet = React.createClass({
         );
 
         // instantiate base layer
-       this.baseLayer = new L.tileLayer(CDBTileUrl, {
+        this.baseLayer = new L.tileLayer(CDBTileUrl, {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 
         });
+
        this.regionLayer = new L.FeatureGroup();
+       this.neighborhoodLayer = new L.FeatureGroup();
 
         // add baselayer to map
         this.map.addLayer(this.baseLayer);
         this.map.addLayer(this.regionLayer);
+        this.map.addLayer(this.neighborhoodLayer);
+        this.determineLayers();
+
+        this.map.on('zoomend', this.determineLayers);
+    },
+    determineLayers: function() {
+        if (this.map.getZoom() < 12) {
+            this.map.addLayer(this.regionLayer);
+            this.map.removeLayer(this.neighborhoodLayer);
+        } else {
+            this.map.removeLayer(this.regionLayer);
+            this.map.addLayer(this.neighborhoodLayer);
+        }
+    },
+    renderPolygon: function(boundary, parentLayer) {
+        var polygon = L.geoJson(JSON.parse(boundary.geojson), {
+            style: function (feature) {
+                return {
+                    stroke: true,
+                    weight: 1,
+                    opacity: 1,
+                    color: '#119b49',
+                    fill: false,
+                    fillOpacity: 5
+                };
+            }
+        });
+       parentLayer.addLayer(polygon);
     },
     componentWillReceiveProps: function(nextProps) {
-        console.log('props received')
+        console.log('props received', nextProps)
         if (nextProps.regions) {
             for (var i = nextProps.regions.length - 1; i >= 0; i--) {
-                console.log('iterating', JSON.parse(nextProps.regions[i].geojson))
-                var polygon = L.geoJson(JSON.parse(nextProps.regions[i].geojson), {
-                    style: function (feature) {
-                        return {
-                            stroke: true,
-                            weight: 1,
-                            opacity: 1,
-                            color: '#119b49',
-                            fill: false,
-                            fillOpacity: 5
-                        };
-                    }
-                });
-
-                this.regionLayer.addLayer(polygon);
+               this.renderPolygon(nextProps.regions[i], this.regionLayer)
             }
         }
-        // console.log('this is next props', nextProps);
+        if (nextProps.neighborhoods) {
+            for (var i = nextProps.neighborhoods.length - 1; i >= 0; i--) {
+               this.renderPolygon(nextProps.neighborhoods[i], this.neighborhoodLayer)
+            }
+        }
     },
     componentWillUnmount: function() {
         this.map.remove();
