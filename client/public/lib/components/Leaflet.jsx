@@ -21,7 +21,7 @@ var Leaflet = React.createClass({
             }
         );
 
-        // instantiate base layer
+        // instantiate layers
         this.baseLayer = new L.tileLayer(CDBTileUrl, {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 
@@ -34,11 +34,14 @@ var Leaflet = React.createClass({
         this.map.addLayer(this.baseLayer);
         this.map.addLayer(this.regionLayer);
         this.map.addLayer(this.neighborhoodLayer);
-        this.determineLayers();
+        this.determineActiveLayers();
 
-        this.map.on('zoomend', this.determineLayers);
+        this.map.on('zoomend', this.determineActiveLayers);
     },
-    determineLayers: function() {
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return nextProps !== this.props && nextState !== this.state
+    },
+    determineActiveLayers: function() {
         if (this.map.getZoom() < 12) {
             this.map.addLayer(this.regionLayer);
             this.map.removeLayer(this.neighborhoodLayer);
@@ -47,37 +50,66 @@ var Leaflet = React.createClass({
             this.map.addLayer(this.neighborhoodLayer);
         }
     },
-    renderPolygon: function(boundary, parentLayer) {
-        var polygon = L.geoJson(JSON.parse(boundary.geojson), {
+    handleHover: function(e) {
+        var newFeature = e.target.name;
+        this.props.onFeatureHover(newFeature);
+    },
+    renderPolygon: function(feature, parentLayer) {
+        var polygon = L.geoJson(JSON.parse(feature.geojson), {
             style: function (feature) {
                 return {
                     stroke: true,
                     weight: 1,
                     opacity: 1,
                     color: '#119b49',
-                    fill: false,
-                    fillOpacity: 5
+                    fill: true,
+                    fillOpacity: 0
                 };
             }
         });
-       parentLayer.addLayer(polygon);
+
+        polygon.name = feature.name;
+        var popupContent = '<h4>' + feature.name + '</h4>';
+        var popup = L.popup({minWidth: 250, closeButton: true, autoPanPaddingTopLeft: [0, 0]}).setContent(popupContent);
+
+        polygon.bindPopup(popup);
+
+        polygon.on('mouseover', function(e){
+            console.log('mouseover')
+            this.props.onFeatureHover(e.target.name);
+        }.bind(this));
+        polygon.on('mouseout', function(){console.log('mouseleave')})
+
+        polygon.on('mouseover', this.handleHover)
+            .on('mouseout', function(e) {
+                    // console.log('mouseout')
+                    // this.props.onFeatureHover('');
+                }.bind(this))
+            .on('click', function (e) {
+                console.log('click polygon', e, e.target)
+                e.target.openPopup();
+             });
+
+        parentLayer.addLayer(polygon);
     },
     componentWillReceiveProps: function(nextProps) {
-        console.log('props received', nextProps)
-        if (nextProps.regions) {
-            for (var i = nextProps.regions.length - 1; i >= 0; i--) {
-               this.renderPolygon(nextProps.regions[i], this.regionLayer)
+        if (nextProps !== this.props) {
+            if (nextProps.regions) {
+                for (var i = nextProps.regions.length - 1; i >= 0; i--) {
+                   this.renderPolygon(nextProps.regions[i], this.regionLayer)
+                }
             }
-        }
-        if (nextProps.neighborhoods) {
-            for (var i = nextProps.neighborhoods.length - 1; i >= 0; i--) {
-               this.renderPolygon(nextProps.neighborhoods[i], this.neighborhoodLayer)
+            if (nextProps.neighborhoods) {
+                for (var i = nextProps.neighborhoods.length - 1; i >= 0; i--) {
+                   this.renderPolygon(nextProps.neighborhoods[i], this.neighborhoodLayer)
+                }
             }
         }
     },
     componentWillUnmount: function() {
         this.map.remove();
     },
+
     render: function() {
 
         var mapStyle = {

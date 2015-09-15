@@ -1,10 +1,15 @@
 var Application = React.createClass({
     getInitialState: function() {
-        return {};
+        return {
+            hoveringOver: ''
+        };
     },
     componentDidMount: function() {
         this.loadRegions();
         this.loadNeigborhoods();
+    },
+    shouldComponentUpdate: function(nextState, nextProps) {
+        return nextState !== this.state
     },
     loadRegions: function() {
         $.getJSON('/api/regions', function(data) {
@@ -20,11 +25,18 @@ var Application = React.createClass({
             });
         }.bind(this));
     },
+    handleHover: function(featureName) {
+        if (this.state.hoveringOver !== featureName) {
+            this.setState({
+                hoveringOver: featureName
+            });
+        }
+    },
     render: function() {
-
         return (
-            <Leaflet regions       = {this.state.regions}
-                     neighborhoods = {this.state.neighborhoods} />
+            <Leaflet regions        = {this.state.regions}
+                     neighborhoods  = {this.state.neighborhoods}
+                     onFeatureHover = {this.handleHover}/>
         );
     }
 });
