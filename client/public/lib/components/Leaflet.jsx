@@ -34,14 +34,15 @@ var Leaflet = React.createClass({
         this.map.addLayer(this.baseLayer);
         this.map.addLayer(this.regionLayer);
         this.map.addLayer(this.neighborhoodLayer);
-        this.determineActiveLayers();
+        this.determineActiveLayerGroup();
+        //
+        this.map.on('zoomend', this.determineActiveLayerGroup);
 
-        this.map.on('zoomend', this.determineActiveLayers);
     },
     shouldComponentUpdate: function(nextProps, nextState) {
-        return nextProps !== this.props && nextState !== this.state
+        return nextProps !== this.props || nextState !== this.state;
     },
-    determineActiveLayers: function() {
+    determineActiveLayerGroup: function() {
         if (this.map.getZoom() < 12) {
             this.map.addLayer(this.regionLayer);
             this.map.removeLayer(this.neighborhoodLayer);
@@ -51,8 +52,15 @@ var Leaflet = React.createClass({
         }
     },
     handleHover: function(e) {
-        var newFeature = e.target.name;
-        this.props.onFeatureHover(newFeature);
+        var newFeature = e.target.name || ''
+        this.setState({
+            hoveringOver: newFeature
+        });
+    },
+    handleLeave: function() {
+        this.setState({
+            hoveringOver: ''
+        });
     },
     renderPolygon: function(feature, parentLayer) {
         var polygon = L.geoJson(JSON.parse(feature.geojson), {
@@ -74,21 +82,18 @@ var Leaflet = React.createClass({
 
         polygon.bindPopup(popup);
 
-        polygon.on('mouseover', function(e){
-            console.log('mouseover')
-            this.props.onFeatureHover(e.target.name);
-        }.bind(this));
-        polygon.on('mouseout', function(){console.log('mouseleave')})
-
-        polygon.on('mouseover', this.handleHover)
-            .on('mouseout', function(e) {
-                    // console.log('mouseout')
-                    // this.props.onFeatureHover('');
-                }.bind(this))
-            .on('click', function (e) {
-                console.log('click polygon', e, e.target)
-                e.target.openPopup();
-             });
+        polygon.on('mouseover', function(e) {
+            e.target.setStyle({
+                fillOpacity: 0.4
+            });
+            this.handleHover(e);
+        }.bind(this))
+        .on('mouseout', function(e) {
+            e.target.setStyle({
+                fillOpacity: 0
+            });
+            this.handleLeave(e);
+        }.bind(this))
 
         parentLayer.addLayer(polygon);
     },
@@ -109,9 +114,7 @@ var Leaflet = React.createClass({
     componentWillUnmount: function() {
         this.map.remove();
     },
-
     render: function() {
-
         var mapStyle = {
             left: 0,
             top: 0,
@@ -121,7 +124,10 @@ var Leaflet = React.createClass({
         }
 
         return (
-            <div id='map' style={mapStyle} ref="leafletDiv"></div>
+            <div>
+                <div id='map' style={mapStyle} ref="leafletDiv"></div>
+                <InfoPanel hoveringOver={this.state.hoveringOver} />
+            </div>
         );
     }
 });

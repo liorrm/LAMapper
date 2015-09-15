@@ -25,13 +25,6 @@ var Application = React.createClass({
             });
         }.bind(this));
     },
-    handleHover: function(featureName) {
-        if (this.state.hoveringOver !== featureName) {
-            this.setState({
-                hoveringOver: featureName
-            });
-        }
-    },
     render: function() {
         return (
             <Leaflet regions        = {this.state.regions}
