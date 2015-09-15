@@ -6,10 +6,16 @@
     right: 0
 }
 
-.leaflet-container {
-    position: absolute
-    left: 0,
-    top: 0,
-    bottom: 0,
-    right: 0
+.info-panel-container {
+    position: absolute;
+    top: 45px;
+    left: 5px;
+    width: 300px;
+    height: 5%;
+    margin-left: 0px;
+    margin-right: 0px;
+    background: white;
+    overflow: auto;
+    padding: 10px;
+    border-radius: 10px;
 }
