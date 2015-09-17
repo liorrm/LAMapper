@@ -43,10 +43,21 @@ var Leaflet = React.createClass({
         return nextProps !== this.props || nextState !== this.state;
     },
     determineActiveLayerGroup: function() {
-        if (this.map.getZoom() < 12) {
+        if (this.map.getZoom() < 11) {
+            // reset layer highlighting if mouseout function wasn't called
+            this.neighborhoodLayer.eachLayer(function(layer) {
+                layer.setStyle({
+                    fillOpacity: 0
+                })
+            });
             this.map.addLayer(this.regionLayer);
             this.map.removeLayer(this.neighborhoodLayer);
         } else {
+            this.regionLayer.eachLayer(function(layer) {
+                layer.setStyle({
+                    fillOpacity: 0
+                })
+            });
             this.map.removeLayer(this.regionLayer);
             this.map.addLayer(this.neighborhoodLayer);
         }
