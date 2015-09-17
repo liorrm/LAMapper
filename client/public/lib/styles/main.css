@@ -7,6 +7,8 @@
 }
 
 .info-panel-container {
+    font-family: "Helvetica Neue", "Helvetica", "Liberation Sans", "Arial", "sans-serif" ;
+    font-weight: 100;
     position: absolute;
     top: 45px;
     left: 5px;

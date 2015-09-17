@@ -43,10 +43,21 @@ var Leaflet = React.createClass({
         return nextProps !== this.props || nextState !== this.state;
     },
     determineActiveLayerGroup: function() {
-        if (this.map.getZoom() < 12) {
+        if (this.map.getZoom() < 11) {
+            // reset layer highlighting if mouseout function wasn't called
+            this.neighborhoodLayer.eachLayer(function(layer) {
+                layer.setStyle({
+                    fillOpacity: 0
+                })
+            });
             this.map.addLayer(this.regionLayer);
             this.map.removeLayer(this.neighborhoodLayer);
         } else {
+            this.regionLayer.eachLayer(function(layer) {
+                layer.setStyle({
+                    fillOpacity: 0
+                })
+            });
             this.map.removeLayer(this.regionLayer);
             this.map.addLayer(this.neighborhoodLayer);
         }
@@ -77,10 +88,6 @@ var Leaflet = React.createClass({
         });
 
         polygon.name = feature.name;
-        var popupContent = '<h4>' + feature.name + '</h4>';
-        var popup = L.popup({minWidth: 250, closeButton: true, autoPanPaddingTopLeft: [0, 0]}).setContent(popupContent);
-
-        polygon.bindPopup(popup);
 
         polygon.on('mouseover', function(e) {
             e.target.setStyle({
@@ -93,6 +100,9 @@ var Leaflet = React.createClass({
                 fillOpacity: 0
             });
             this.handleLeave(e);
+        }.bind(this))
+        .on('click', function(e) {
+            this.map.fitBounds(polygon.getBounds());
         }.bind(this))
 
         parentLayer.addLayer(polygon);
