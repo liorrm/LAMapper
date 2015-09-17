@@ -88,10 +88,6 @@ var Leaflet = React.createClass({
         });
 
         polygon.name = feature.name;
-        var popupContent = '<h4>' + feature.name + '</h4>';
-        var popup = L.popup({minWidth: 250, closeButton: true, autoPanPaddingTopLeft: [0, 0]}).setContent(popupContent);
-
-        polygon.bindPopup(popup);
 
         polygon.on('mouseover', function(e) {
             e.target.setStyle({
@@ -104,6 +100,9 @@ var Leaflet = React.createClass({
                 fillOpacity: 0
             });
             this.handleLeave(e);
+        }.bind(this))
+        .on('click', function(e) {
+            this.map.fitBounds(polygon.getBounds());
         }.bind(this))
 
         parentLayer.addLayer(polygon);
